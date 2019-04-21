@@ -1,0 +1,125 @@
+
+
+STAGE
+
+Wexlink domain (SA Middleware)
+*************************************** 
+BEFORE 
+*************************************** 
+1. Stop managed servers 
+
+*************************************** 
+JMS 
+*************************************** 
+2. Copy integrationmodule-jms.xml from pwm-wex-236:/weblogic/tags/hippo/release-hippo-20181118-1107-wexlink/directories/jms to /app/mw/admin/domains/wexlink_domain/config/jms on the appropriate admin server for the environment. 
+
+3. Restart Admin server 
+
+*************************************** 
+PROPERTY FILES 
+*************************************** 
+
+3. Copy all including nested directories 
+from : pwm-wex-236:/weblogic/tags/hippo/release-hippo-20181118-1107-wexlink/directories/resources/ 
+to : /r41/${WLS_ENV}/weblogic/domains/wexlink/resources 
+
+(These were already added in STAGE under Cherwell Task 12221)
+	Add in CommonToken.properties , copy the replacement value from GSAUpdate {Please reach out to SI-DEv if you have any questions)
+
+	# GSA SP3 Card Add
+	GSASP3Add_ftp_inbound_customer_host=~GSASP3Add_ftp_inbound_customer_host
+	GSASP3Add_ftp_inbound_customer_user=~GSASP3Add_ftp_inbound_customer_user
+	GSASP3Add_ftp_inbound_customer_pwd=~GSASP3Add_ftp_inbound_customer_pwd
+	GSASP3Add_ftp_inbound_customer_port=~GSASP3Add_ftp_inbound_customer_port
+	GSASP3Add_ftp_inbound_customer_dir=~GSASP3Add_ftp_inbound_customer_dir
+
+	GSASP3Add_postprocess_ftp_remote_location=~GSASP3Add_postprocess_ftp_remote_location
+	GSASP3Add_postprocess_ftp_host=~GSASP3Add_postprocess_ftp_host
+	GSASP3Add_postprocess_ftp_user=~GSASP3Add_postprocess_ftp_user
+	GSASP3Add_postprocess_ftp_pass=~GSASP3Add_postprocess_ftp_pass
+
+
+	## Setup for GSASP3 Update
+	GSASP3Update_ftp_inbound_customer_host=~GSASP3Update_ftp_inbound_customer_host
+	GSASP3Update_ftp_inbound_customer_user=~GSASP3Update_ftp_inbound_customer_user
+	GSASP3Update_ftp_inbound_customer_pwd=~GSASP3Update_ftp_inbound_customer_pwd
+	GSASP3Update_ftp_inbound_customer_port=~GSASP3Update_ftp_inbound_customer_port
+	GSASP3Update_ftp_inbound_customer_dir=~GSASP3Update_ftp_inbound_customer_dir
+
+	#[GSASP3Update_postprocess_ftp]
+	GSASP3Update_postprocess_ftp_remote_location=~GSASP3Update_postprocess_ftp_remote_location
+	GSASP3Update_postprocess_ftp_host=~GSASP3Update_postprocess_ftp_host
+	GSASP3Update_postprocess_ftp_user=~GSASP3Update_postprocess_ftp_user
+	GSASP3Update_postprocess_ftp_pass=~GSASP3Update_postprocess_ftp_pass
+
+	## Setup for GSASTR Update
+	GSASTRUpdate_ftp_inbound_customer_host=~GSASTRUpdate_ftp_inbound_customer_host
+	GSASTRUpdate_ftp_inbound_customer_user=~GSASTRUpdate_ftp_inbound_customer_user
+	GSASTRUpdate_ftp_inbound_customer_pwd=~GSASTRUpdate_ftp_inbound_customer_pwd
+	GSASTRUpdate_ftp_inbound_customer_port=~GSASTRUpdate_ftp_inbound_customer_port
+	GSASTRUpdate_ftp_inbound_customer_dir=~GSASTRUpdate_ftp_inbound_customer_dir
+
+	#[GSASTRUpdate_postprocess_ftp]
+	GSASTRUpdate_postprocess_ftp_remote_location=~GSASTRUpdate_postprocess_ftp_remote_location
+	GSASTRUpdate_postprocess_ftp_host=~GSASTRUpdate_postprocess_ftp_host
+	GSASTRUpdate_postprocess_ftp_user=~GSASTRUpdate_postprocess_ftp_user
+	GSASTRUpdate_postprocess_ftp_pass=~GSASTRUpdate_postprocess_ftp_pass
+
+(Please re-run this step to pick up the properties)
+4. Run property replacement scripts 
+
+*************************************** 
+LIB 
+*************************************** 
+5. Copy all including nested directories 
+from : pwm-wex-236:/weblogic/tags/hippo/release-hippo-20181118-1107-wexlink/directories/lib/ 
+to : /r41/${WLS_ENV}/weblogic/domains/wexlink/lib 
+
+*************************************** 
+SOURCE
+*************************************** 
+6. Copy all deployments 
+from : pwm-wex-236:/weblogic/tags/hippo/release-hippo-20181118-1107-wexlink/deployments 
+to : /r41/${WLS_ENV}/weblogic/domains/wexlink/source 
+
+*************************************** 
+DATA 
+*************************************** 
+7. Copy xlsTemplate.xls from pwm-wex-236:/weblogic/tags/hippo/release-hippo-20181118-1107-wexlink/directories/data/ClassicAdapter/ to /i1/${WLS_ENV}/weblogic/domains/wexlink/data/ClassicAdapter 
+
+
+*************************************** 
+AUTO DEPLOY
+*************************************** 
+8. Run the following script: /r41/${WLS_ENV}/weblogic/domains/common/scripts/wexlink_redeploy.sh, make sure the build ends in success. If it fails, attempt one more time. If the second try fails, execute the BACKUP DEPLOYMENT STRATEGY section. Otherwise continue with next sections.
+
+
+*************************************** 
+AFTER 
+*************************************** 
+9. Start managed servers
+10. Once managed servers are running and healthy, start the batch controller thread
+
+*************************************** 
+HEALTH CHECK
+***************************************
+11. Check that deployments Weblogic deployments are OK, not warning.
+12. Check that both managed servers are healthy and running
+
+
+*************************************** 
+BACKUP DEPLOYMENT STRATEGY
+*************************************** 
+ONLY EXECUTE IF AUTO DEPLOY SECTION FAILED
+
+BACKUP STEP. Redeploy below files from /r41/${WLS_ENV}/weblogic/domains/wexlink/source into the wexlink domain 
+
+Deployment --> File 
+-------------------------------------------------------------------------------- 
+ErrorReportingEAR-1 --> ErrorReportingEAR-1.0.ear 
+NotificationEAR-1 --> NotificationEAR-1.0.ear 
+BatchControlEAR-1 --> BatchControlEAR-1.0.ear 
+AuditService-1 --> AuditService-1.0.war 
+
+BatchControllerHTTP-1 (Target only one server where jms server is running) --> BatchControllerHTTP-1.0.war 
+

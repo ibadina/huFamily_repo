@@ -1,0 +1,6 @@
+[root@apa-wex-359 maillog_archive]# grep --color -i -n "abacopest" maillog-20180802
+[root@apa-wex-359 maillog_archive]# grep --color -i -n "abacopest" maillog-20180701
+[root@apa-wex-359 maillog_archive]# grep --color -i -n "abacopest" maillog-20180702
+[root@pwm-wex-1024 maillog_archive]# grep "abacopest@comcast.net" maillog-20180801
+[root@pwm-wex-1024 maillog_archive]# grep "abacopest@comcast.net" maillog-20180802
+[root@pwm-wex-1024 maillog_archive]# grep "abacopest@comcast.net" maillog-20180803
